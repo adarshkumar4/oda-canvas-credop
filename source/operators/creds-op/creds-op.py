@@ -1,79 +1,44 @@
-# import kopf
-
 # https://34.42.225.108
 
-# GROUP = "oda.tmforum.org"
-# IDENTITYCONFIG_VERSION = "v1"
-# IDENTITYCONFIG_PLURAL = "identityconfigs"
-
-
-# @kopf.on.update(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
-# def credsOp(
-#     meta, spec, status, body, namespace, labels, name, old, new, **kwargs
-# ):
-
-#     try:
-#         r = requests.post(
-#             self._url + "/realms/master/protocol/openid-connect/token",
-#             data={
-#                 "username": user,
-#                 "password": pwd,
-#                 "grant_type": "password",
-#                 "client_id": "admin-cli",
-#                 },
-#             )
-#             r.raise_for_status()
-#             return r.json()["access_token"]
-#         except requests.HTTPError as e:
-#             raise RuntimeError(
-#                 f"get_token failed with HTTP status {r.status_code}: {e}"
-#             ) from None
-
-    
-
+import kopf
 import requests
 import base64
 import kubernetes.client
 from kubernetes import config
+import os
 
 config.load_kube_config()
-# kcBaseURL = os.environ.get("KEYCLOAK_BASE")
-# kcRealm = os.environ.get("KEYCLOAK_REALM")
 
+# creds_client_id = os.environ.get("creds_client_id")
+# creds_client_secret = os.environ.get("creds_client_secret")
+# url = os.environ.get("KEYCLOAK_BASE")
+# realm = os.environ.get("KEYCLOAK_REALM")
+
+creds_client_id = "credsop"
+creds_client_secret =  "U447ybPAq3zZe1Lv7ys2oCajmcz4p3ce"
 url = "http://34.173.174.235:8083/auth"
-
 realm = "odari"
-client_id = "credsop"
 
 
 r1 = requests.post(
-    url + "/realms/odari/protocol/openid-connect/token",
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    data={
-            "client_id": "credsop",
-            "client_secret":"U447ybPAq3zZe1Lv7ys2oCajmcz4p3ce",
-            "grant_type": "client_credentials",
+        url + "/realms/"+ realm +"/protocol/openid-connect/token",
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
-    )
-
-# url = "http://34.173.174.235:8083/auth/realms/odari/protocol/openid-connect/token"
-
-# payload = 'client_id=credsop&client_secret=U447ybPAq3zZe1Lv7ys2oCajmcz4p3ce&grant_type=client_credentials'
-
-
-# response = requests.request("POST", url, headers=headers, data=payload)
-
-# # print(response.text)
+        data={
+                "client_id": creds_client_id,
+                "client_secret":creds_client_secret,
+                "grant_type": "client_credentials",
+            },
+        )
 
 token = r1.json()["access_token"]
 
-# print(token)
+client_id = creds_client_id
 
 r2 = requests.get(
-        url + "/admin/realms/" + "odari" + "/clients",
-        params={"clientId": "credsop"},
+        url + "/admin/realms/" + realm+ "/clients",
+        params={"clientId": client_id},
         headers={"Authorization": "Bearer " + token},
         )
         
@@ -98,21 +63,3 @@ secret = kubernetes.client.V1Secret(
 )
 
 core_v1_api.create_namespaced_secret(namespace="default", body=secret)
-
-# for d in r2.json() :
-#     print(d["id"])
-
-
-
-
-
-# url2 = "http://34.173.174.235:8083/auth/admin/realms/odari/clients"
-
-# payload2 = {}
-# headers2 = {
-#   'Authorization': 'Bearer '+response.json()["access_token"]
-# }
-
-# response2 = requests.request("GET", url2, headers=headers2, data=payload2)
-
-# print(response2.json())

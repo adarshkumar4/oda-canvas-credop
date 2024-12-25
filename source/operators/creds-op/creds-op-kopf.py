@@ -3,33 +3,40 @@ import requests
 import base64
 import kubernetes.client
 from kubernetes import config
+import os
 
 config.load_kube_config()
 
-url = "http://34.173.174.235:8083/auth"
+# url = "http://34.173.174.235:8083/auth"
+# realm = "odari"
 
-realm = "odari"
-client_id = "credsop"
+creds_client_id = os.environ.get("creds_client_id")
+creds_client_secret = os.environ.get("creds_client_secret")
+url = os.environ.get("KEYCLOAK_BASE")
+realm = os.environ.get("KEYCLOAK_REALM")
 
 GROUP = "oda.tmforum.org"
 IDENTITYCONFIG_VERSION = "v1"
 IDENTITYCONFIG_PLURAL = "identityconfigs"
 
-print("kopf")
 
 @kopf.on.update(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
 def credsOp(
     meta, spec, status, body, namespace, labels, name, old, new, **kwargs
 ):
 
+    # del unused-arguments for linting
+    del status, labels, kwargs
+
+
     r1 = requests.post(
-        url + "/realms/odari/protocol/openid-connect/token",
+        url + "/realms/"+ realm +"/protocol/openid-connect/token",
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         data={
-                "client_id": "credsop",
-                "client_secret":"U447ybPAq3zZe1Lv7ys2oCajmcz4p3ce",
+                "client_id": creds_client_id,
+                "client_secret":creds_client_secret,
                 "grant_type": "client_credentials",
             },
         )
@@ -38,10 +45,11 @@ def credsOp(
     token = r1.json()["access_token"]
 
 
+    client_id = name
 
     r2 = requests.get(
-        url + "/admin/realms/" + "odari" + "/clients",
-        params={"clientId": "credsop"},
+        url + "/admin/realms/" + realm+ "/clients",
+        params={"clientId": client_id},
         headers={"Authorization": "Bearer " + token},
         )
         
