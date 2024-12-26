@@ -15,7 +15,7 @@ config.load_kube_config()
 # realm = os.environ.get("KEYCLOAK_REALM")
 
 creds_client_id = "credsop"
-creds_client_secret =  "U447ybPAq3zZe1Lv7ys2oCajmcz4p3ce"
+creds_client_secret =  "credsop"
 url = "http://34.173.174.235:8083/auth"
 realm = "odari"
 

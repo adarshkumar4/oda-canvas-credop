@@ -10,8 +10,8 @@ config.load_kube_config()
 # url = "http://34.173.174.235:8083/auth"
 # realm = "odari"
 
-creds_client_id = os.environ.get("creds_client_id")
-creds_client_secret = os.environ.get("creds_client_secret")
+creds_client_id = os.environ.get("CLIENT_ID")
+creds_client_secret = os.environ.get("CLIENT_SECRET")
 url = os.environ.get("KEYCLOAK_BASE")
 realm = os.environ.get("KEYCLOAK_REALM")
 
