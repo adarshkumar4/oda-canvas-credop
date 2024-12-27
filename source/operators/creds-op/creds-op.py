@@ -1,5 +1,3 @@
-# https://34.42.225.108
-
 import kopf
 import requests
 import base64
@@ -9,13 +7,14 @@ import os
 
 config.load_kube_config()
 
+# https://34.42.225.108
 # creds_client_id = os.environ.get("creds_client_id")
 # creds_client_secret = os.environ.get("creds_client_secret")
 # url = os.environ.get("KEYCLOAK_BASE")
 # realm = os.environ.get("KEYCLOAK_REALM")
 
 creds_client_id = "credsop"
-creds_client_secret =  "credsop"
+creds_client_secret =  "U447ybPAq3zZe1Lv7ys2oCajmcz4p3ce"
 url = "http://34.173.174.235:8083/auth"
 realm = "odari"
 

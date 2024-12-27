@@ -1,7 +1,7 @@
 deployment:
   operatorName: credentialsmanagement-operator
   credopImage: adarshkrm/credentialsmanagement-operator
-  credopVersion: 0.0.1
+  credopVersion: 0.0.2
   credopPrereleaseSuffix:
   imagePullPolicy: IfNotPresent
   istioGateway: true
@@ -11,6 +11,8 @@ deployment:
     name: nginx
   dataDog:
     enabled: false
+  keycloak:
+    port: 8080
   hostName: "*"
   httpsRedirect: true
   credentialName: istio-ingress-cert   
@@ -18,3 +20,7 @@ deployment:
 credentials:
   client_id: credsop
   client_secret: U447ybPAq3zZe1Lv7ys2oCajmcz4p3ce 
+configmap:
+  #kcbase: http://canvas-keycloak:8088/auth # trying to parameterise this in the configmap
+  kcrealm: odari
+  loglevel: '20'

@@ -2,10 +2,10 @@ import kopf
 import requests
 import base64
 import kubernetes.client
-from kubernetes import config
+# from kubernetes import config
 import os
 
-config.load_kube_config()
+# config.load_kube_config()
 
 # url = "http://34.173.174.235:8083/auth"
 # realm = "odari"
@@ -64,8 +64,10 @@ def credsOp(
 
     decoded_client_id = base64.b64decode(encoded_client_id).decode('utf-8')
 
+    
     print(encoded_client_id + "\n" + encoded_client_secret)
-
+    print("\n " + decoded_client_id)
+    
     core_v1_api = kubernetes.client.CoreV1Api()
 
     secret = kubernetes.client.V1Secret(
@@ -75,3 +77,4 @@ def credsOp(
 
     core_v1_api.create_namespaced_secret(namespace="default", body=secret)
 
+    print("\n secret cretaed")

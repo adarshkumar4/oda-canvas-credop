@@ -1,0 +1,25 @@
+cd charts/cert-manager-init
+helm dependency update
+helm dependency build
+cd ../../charts/component-operator
+helm dependency update
+helm dependency build
+cd ../../charts/api-operator-istio
+helm dependency update
+helm dependency build
+cd ../../charts/identityconfig-operator-keycloak
+helm dependency update
+helm dependency build
+cd ../../charts/canvas-vault
+helm dependency update
+helm dependency build
+cd ../../charts/secretsmanagement-operator
+helm dependency update
+helm dependency build
+cd ../../charts/canvas-oda
+helm dependency update
+helm dependency build
+cd ../../charts/credentialsmanagement-operator
+helm dependency update
+helm dependency build
+cd ../..
