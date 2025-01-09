@@ -4,7 +4,9 @@ import base64
 import logging
 import kubernetes.client
 from kubernetes import config
+from kubernetes.client.rest import ApiException
 import os
+import json
 
 config.load_kube_config()
 
@@ -27,45 +29,46 @@ credsOp_client_secret =  "U447ybPAq3zZe1Lv7ys2oCajmcz4p3ce"
 url = "http://34.173.174.235:8083/auth"
 realm = "odari"
 
+logger.info(f"{credsOp_client_id}, {credsOp_client_secret}, {url} , {realm}")
 
-try:
-    r = requests.post(
-            url + "/realms/"+ realm +"/protocol/openid-connect/token",
-            headers = {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            data={
-                    "client_id": credsOp_client_id,
-                    "client_secret":credsOp_client_secret,
-                    "grant_type": "client_credentials",
-            },
-        )
-    r.raise_for_status()
-    token = r.json()["access_token"]
-except requests.HTTPError as e:
-    raise RuntimeError(
-        f"request for token failed with HTTP status {r.status_code}: {e}"
-    ) from None
-else:
-    logger.info( f'token : {token}' )
+# try:
+#     r = requests.post(
+#             url + "/realms/"+ realm +"/protocol/openid-connect/token",
+#             headers = {
+#                 'Content-Type': 'application/x-www-form-urlencoded'
+#             },
+#             data={
+#                     "client_id": credsOp_client_id,
+#                     "client_secret":credsOp_client_secret,
+#                     "grant_type": "client_credentials",
+#             },
+#         )
+#     r.raise_for_status()
+#     token = r.json()
+# except requests.HTTPError as e:
+#     raise RuntimeError(
+#         f"request for token failed with HTTP status {r.status_code}: {e}"
+#     ) from None
+# else:
+#     logger.info( f'token : {token}' )
 
 
-client_id = credsOp_client_id
+# client_id = credsOp_client_id
 
-try:
-    r = requests.get(
-            url + "/admin/realms/" + realm + "/clients",
-            params={"clientId": client_id},
-            headers={"Authorization": "Bearer " + token},
-        )
+# try:
+#     r = requests.get(
+#             url + "/admin/realms/" + realm + "/clients",
+#             params={"clientId": client_id},
+#             headers={"Authorization": "Bearer " + token},
+#         )
         
-    client_secret = r.json()[0]["secret"]
-except requests.HTTPError as e:
-    raise RuntimeError(
-        f"request for client_secret failed with HTTP status {r.status_code}: {e}"
-    ) from None
-else:
-    logger.info( f'client_secret : {client_secret}' )
+#     client_secret = r.json()[0]["secret"]
+# except requests.HTTPError as e:
+#     raise RuntimeError(
+#         f"request for client_secret failed with HTTP status {r.status_code}: {e}"
+#     ) from None
+# else:
+#     logger.info( f'client_secret : {client_secret}' )
    
 
 # encoded_client_id = base64.b64encode(client_id.encode('utf-8')).decode('utf-8')
@@ -74,13 +77,24 @@ else:
 
 # # decoded_client_id = base64.b64decode(encoded_client_id).decode('utf-8')
 
-# print(encoded_client_id + "\n" + encoded_client_secret)
+# logger.info( f'encoded_client_id : {encoded_client_id}' )
 
-# core_v1_api = kubernetes.client.CoreV1Api()
+try:
+    core_v1_api = kubernetes.client.CoreV1Api()
 
-# secret = kubernetes.client.V1Secret(
-#     metadata=kubernetes.client.V1ObjectMeta(name=client_id + "-secret"),
-#     data={"client_id": encoded_client_id, "client_secret": encoded_client_secret}  # Base64 encoded values
-# )
+    secret = kubernetes.client.V1Secret(
+        metadata=kubernetes.client.V1ObjectMeta(name="client_id" + "-secret"),
+        data={"client_id": "encoded_client_id", "client_secret": "encoded_client_secret"}  # Base64 encoded values
+    )
 
-# core_v1_api.create_namespaced_secret(namespace="default", body=secret)
+    core_v1_api.create_namespaced_secret(namespace="default", body=secret)
+except ApiException as e:
+
+        reason = e.body
+        body=json.loads(e.body)
+        logger.info( body )
+        logger.error(
+            f"secret creation failed : {reason} "
+        )
+else:
+        logger.info( 'secret created' )
