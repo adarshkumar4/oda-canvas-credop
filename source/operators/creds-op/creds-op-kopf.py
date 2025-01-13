@@ -4,19 +4,13 @@ import base64
 import logging
 import kubernetes.client
 from kubernetes.client.rest import ApiException
-# from kubernetes import config
 import json
 import os
-
-# config.load_kube_config()
-
-# url = "http://34.173.174.235:8083/auth"
-# realm = "odari"
 
 logging_level = os.environ.get("LOGGING", logging.INFO)
 logger = logging.getLogger('CredentialsOperator')
 logger.setLevel(int(logging_level))
-logger.info(f'Logging set to %s', logging.INFO)
+logger.info("Logging set to %s", logging_level)
 
 credsOp_client_id = os.environ.get("CLIENT_ID")
 credsOp_client_secret = os.environ.get("CLIENT_SECRET")
@@ -29,9 +23,9 @@ IDENTITYCONFIG_PLURAL = "identityconfigs"
 
 logger.info(f"{credsOp_client_id}, {credsOp_client_secret}, {url} , {realm}")
 
-@kopf.on.resume(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
-@kopf.on.create(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
-# @kopf.on.update(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
+# @kopf.on.resume(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
+# @kopf.on.create(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
+@kopf.on.update(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
 def credsOp(
     meta, spec, status, body, namespace, labels, name, old, new, **kwargs
 ):
