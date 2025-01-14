@@ -23,6 +23,12 @@ IDENTITYCONFIG_PLURAL = "identityconfigs"
 
 logger.info(f"{credsOp_client_id}, {credsOp_client_secret}, {url} , {realm}")
 
+# try to recover from broken watchers https://github.com/nolar/kopf/issues/1036
+@kopf.on.startup()
+def configure(settings: kopf.OperatorSettings, **_):
+    settings.watching.server_timeout = 1 * 60
+
+
 # @kopf.on.resume(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
 # @kopf.on.create(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
 @kopf.on.update(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
