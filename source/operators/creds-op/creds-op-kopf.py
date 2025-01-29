@@ -31,14 +31,14 @@ def configure(settings: kopf.OperatorSettings, **_):
     settings.watching.server_timeout = 1 * 60
 
 
-@kopf.on.update(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
-def credsOp(
+@kopf.on.field(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, field="status", retries=5)
+async def credsOp(
     meta, spec, status, body, namespace, labels, name, old, new, **kwargs
 ):
     
-    # del unused-arguments for linting
-    del status, labels, kwargs
-
+    logger.info(f'\n old: {old} ')
+    logger.info(f'\n new: {new} ')
+    logger.info(f'\n status: {status} ')
 
     try:
         r = requests.post(
@@ -99,38 +99,12 @@ def credsOp(
             data={"client_id": encoded_client_id, "client_secret": encoded_client_secret}  # Base64 encoded values
         )
 
+        kopf.adopt(secret)
+        
         core_v1_api.create_namespaced_secret(namespace=namespace, body=secret)
     except ApiException as e:
-        reason = json.loads(e.body)['reason']
-        if(reason == "AlreadyExists"):
-            logger.info( 'secret already exists no need to create it again' )
-            pass
-        else:
-            raise kopf.TemporaryError(
-                f"secret creation failed : {e} "
-            )
-    else:
-        logger.info( 'secret created' )
-
-
-
-@kopf.on.delete(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
-def deleteSecret(
-    meta, spec, status, body, namespace, labels, name, old, new, **kwargs
-):
-
-    # del unused-arguments for linting
-    del status, labels, kwargs
-
-    try:
-        secret_name = name + "-secret"
-        core_v1_api = kubernetes.client.CoreV1Api()
-        
-        api_response = core_v1_api.delete_namespaced_secret(namespace=namespace, name=secret_name)
-    except ApiException as e:
-
         raise kopf.TemporaryError(
-            f"secret deletion failed : {e} "
+            f"secret creation failed : {e} "
         )
     else:
-        logger.info( f'secret {secret_name} deleted' )
+        logger.info( 'secret created' )
