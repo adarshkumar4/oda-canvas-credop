@@ -21,24 +21,24 @@ componentname_label = os.getenv("COMPONENTNAME_LABEL", "oda.tmforum.org/componen
 
 # Helper functions ----------
 
-def register_listener(url: str) -> None:
-    """
-    Register the listener URL with partyRoleManagement for role updates
+# def register_listener(url: str) -> None:
+#     """
+#     Register the listener URL with partyRoleManagement for role updates
 
-    Returns nothing, or raises an exception for the caller to catch
-    """
+#     Returns nothing, or raises an exception for the caller to catch
+#     """
 
-    try:  # to register the listener
-        # pylint: disable=try-except-raise
-        # Disabled because we raise immediately deliberately. We want
-        # Kopf to handle this and only this error until we come across
-        # more errors
-        r = requests.post(
-            url, json={"callback": "http://idlistkey.canvas:5000/listener"}
-        )
-        r.raise_for_status()
-    except RuntimeError:
-        raise
+#     try:  # to register the listener
+#         # pylint: disable=try-except-raise
+#         # Disabled because we raise immediately deliberately. We want
+#         # Kopf to handle this and only this error until we come across
+#         # more errors
+#         r = requests.post(
+#             url, json={"callback": "http://idlistkey.canvas:5000/listener"}
+#         )
+#         r.raise_for_status()
+#     except RuntimeError:
+#         raise
 
 
 def safe_get(default_value, dictionary, *paths):
@@ -82,7 +82,6 @@ IDENTITYCONFIG_KIND = "IdentityConfig"
 def configure(settings: kopf.OperatorSettings, **_):
     settings.watching.server_timeout = 1 * 60
 
-
 # @kopf.on.update(
 #     GROUP,
 #     VERSION,
@@ -94,14 +93,15 @@ def configure(settings: kopf.OperatorSettings, **_):
 @kopf.on.resume(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
 @kopf.on.create(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
 @kopf.on.update(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
-def identityConfig(
+async def identityConfig(
     meta, spec, status, body, namespace, labels, name, old, new, **kwargs
 ):
     """
     Handler for component create/update
     """
-    # del unused-arguments for linting
-    del status, labels, kwargs
+    # # del unused-arguments for linting
+    # del status, labels, kwargs
+    
 
     logw = LogWrapper(
         handler_name="security_client_add", function_name="security_client_add"
@@ -117,7 +117,6 @@ def identityConfig(
     logw.info(f"\n old: {old}")
     logw.info(f"\n new: {new}")
 
-    
     try:  # to authenticate and get a token
         token = kc.get_token(username, password)
     except RuntimeError as e:
@@ -139,6 +138,86 @@ def identityConfig(
         )
     else:
         logw.info(f"Client {name} created")
+
+    # try:
+    #     custom_objects_api = kubernetes.client.CustomObjectsApi()
+    #     identity_component = custom_objects_api.get_namespaced_custom_object(
+    #         IDENTITYCONFIG_GROUP,
+    #         IDENTITYCONFIG_VERSION,
+    #         namespace,
+    #         IDENTITYCONFIG_PLURAL,
+    #         name,
+    #     )
+
+    #     print('\n identity_component:', identity_component)
+    # except ApiException as e:
+    #         # Cant find identity component (if component in same chart as other kubernetes resources it may not be created yet)
+    #         if e.status == HTTP_NOT_FOUND:
+    #             raise kopf.TemporaryError(
+    #                 "Cannot find identity component " + identity_component_name
+    #             )
+    #         else:
+    #             logw.error(
+    #                 f"Exception when calling identity custom_objects_api.get_namespaced_custom_object: {e}"
+    #             )
+
+
+    # identity_component["spec"]["canvasSystemRole"] = "catShip"
+    # # spec["canvasSystemRole"] = "cats"
+    # print('\n 165 spec:', spec)
+    # print('\n identity_component:', identity_component["spec"])
+
+    # identity_component["status"]["canReg"] = "catship"
+    # # status["canRegs"] = "cat"
+    
+    # print('\n 165 status:', status)
+    # print('\n identity_component:', identity_component["status"])
+
+    # try:
+    #     api_response = custom_objects_api.patch_namespaced_custom_object(
+    #         IDENTITYCONFIG_GROUP,
+    #         IDENTITYCONFIG_VERSION,
+    #         namespace,
+    #         IDENTITYCONFIG_PLURAL,
+    #         name,
+    #         identity_component,
+    #     )
+
+    #     print('\n result of patch:',api_response)
+    #     # print('\n 187 spec:', spec)
+    #     print('\n 187 status:', status)
+
+    #     logw.debug(f"patchComponent identity: {api_response}")
+    # except ApiException as e:
+    #     logw.warning(
+    #         f"Exception when calling identity api_instance.patch_namespaced_custom_object for component {name}"
+    #     )
+    #     raise kopf.TemporaryError(
+    #         f"execption :  {e} "
+    #     )
+
+    # try:
+    #     custom_objects_api = kubernetes.client.CustomObjectsApi()
+    #     id_component = custom_objects_api.get_namespaced_custom_object(
+    #         IDENTITYCONFIG_GROUP,
+    #         IDENTITYCONFIG_VERSION,
+    #         namespace,
+    #         IDENTITYCONFIG_PLURAL,
+    #         name,
+    #     )
+
+    #     print('\n id_component:', id_component)
+    # except ApiException as e:
+    #         # Cant find identity component (if component in same chart as other kubernetes resources it may not be created yet)
+    #         if e.status == HTTP_NOT_FOUND:
+    #             raise kopf.TemporaryError(
+    #                 "Cannot find identity component " + identity_component_name
+    #             )
+    #         else:
+    #             logw.error(
+    #                 f"Exception when calling identity custom_objects_api.get_namespaced_custom_object: {e}"
+    #             )
+
 
     try:  # to get the list of existing clients and the client object for this component
         client_list = kc.get_client_list(token, kcRealm)
@@ -197,17 +276,18 @@ def identityConfig(
     #     partyRoleAPI = spec["partyRoleAPI"]
 
     #     try:  # to register with the partyRoleManagement API
-    #         rooturl = (
-    #             "http://"
-    #             + partyRoleAPI["implementation"]
-    #             + "."
-    #             + namespace
-    #             + ".svc.cluster.local:"
-    #             + str(partyRoleAPI["port"])
-    #             + partyRoleAPI["path"]
-    #         )
-    #         logw.info(f"register_listener for url {rooturl}")
-    #         register_listener(rooturl + "/hub")
+    #         # rooturl = (
+    #         #     "http://"
+    #         #     + partyRoleAPI["implementation"]
+    #         #     + "."
+    #         #     + namespace
+    #         #     + ".svc.cluster.local:"
+    #         #     + str(partyRoleAPI["port"])
+    #         #     + partyRoleAPI["path"]
+    #         # )
+    #         # logw.info(f"register_listener for url {rooturl}")
+    #         # register_listener(rooturl + "/hub")
+    #         register_listener("http://34.122.30.2/r2-productcatalogmanagement/tmf-api/partyRoleManagement/v4/hub")
 
     #     except RuntimeError as e:
     #         logw.error(f"register_listener failed for url {rooturl}", str(e))
@@ -220,6 +300,10 @@ def identityConfig(
     #     status_value = {"identityProvider": "Keycloak", "listenerRegistered": False}
 
     status_value = {"identityProvider": "Keycloak", "listenerRegistered": False}
+
+    logw.info(f"\n status: {status}")
+    # print('\n name: ', meta["ownerReferences"][0]["name"])
+
     # update the status value to the parent component object
     if "ownerReferences" in meta.keys():
         # str | the custom object's name
@@ -234,6 +318,9 @@ def identityConfig(
                 COMPONENTS_PLURAL,
                 parent_component_name,
             )
+
+            # print('\n parent_component:', parent_component)
+
         except ApiException as e:
             # Cant find parent component (if component in same chart as other kubernetes resources it may not be created yet)
             if e.status == HTTP_NOT_FOUND:
@@ -247,6 +334,8 @@ def identityConfig(
 
         parent_component["status"]["identityConfig"] = status_value
 
+        # print('\n 251 status:', status)
+
         try:
             api_response = custom_objects_api.patch_namespaced_custom_object(
                 GROUP,
@@ -256,6 +345,9 @@ def identityConfig(
                 parent_component_name,
                 parent_component,
             )
+
+            # print('\n 263 status:', status)
+
             logw.debug(f"patchComponent: {api_response}")
         except ApiException as e:
             logw.warning(
@@ -266,18 +358,21 @@ def identityConfig(
                 + name
             )
 
+        
+    logw.info(f"\n status: {status}")
     # the return value is added to the status field of the k8s object
     # under securityRoles parameter (corresponds to function name)
     return status_value
 
 
-# @kopf.on.field(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, field="status.identityConfig", retries=5)
-# def crOp(
+# @kopf.on.field(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, field="status", retries=5)
+# async def credsOp(
 #     meta, spec, status, body, namespace, labels, name, old, new, **kwargs
 # ):
-#     print(" \n status",status)
-
-
+    
+#     print('\n old:', old)
+#     print('\n new:', new)
+#     print('\n status:', status)
 
 @kopf.on.delete(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
 def security_client_delete(meta, spec, status, body, namespace, labels, name, **kwargs):

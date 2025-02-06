@@ -4,13 +4,19 @@ import base64
 import logging
 import kubernetes.client
 from kubernetes.client.rest import ApiException
+# from kubernetes import config
 import json
 import os
+
+# config.load_kube_config()
+
+# url = "http://34.173.174.235:8083/auth"
+# realm = "odari"
 
 logging_level = os.environ.get("LOGGING", logging.INFO)
 logger = logging.getLogger('CredentialsOperator')
 logger.setLevel(int(logging_level))
-logger.info("Logging set to %s", logging_level)
+logger.info(f'Logging set to %s', logging.INFO)
 
 credsOp_client_id = os.environ.get("CLIENT_ID")
 credsOp_client_secret = os.environ.get("CLIENT_SECRET")
@@ -18,37 +24,22 @@ url = os.environ.get("KEYCLOAK_BASE")
 realm = os.environ.get("KEYCLOAK_REALM")
 
 GROUP = "oda.tmforum.org"
-VERSION = "v1"
-COMPONENTS_PLURAL = "components"
 IDENTITYCONFIG_VERSION = "v1"
 IDENTITYCONFIG_PLURAL = "identityconfigs"
 
 logger.info(f"{credsOp_client_id}, {credsOp_client_secret}, {url} , {realm}")
 
-# try to recover from broken watchers https://github.com/nolar/kopf/issues/1036
-@kopf.on.startup()
-def configure(settings: kopf.OperatorSettings, **_):
-    settings.watching.server_timeout = 1 * 60
-
-
-def is_status_changed(status, **_):
-    return status.get('credsOp/status.identityConfig') != "done"
-
-
-@kopf.on.field(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, field="status.identityConfig", when=is_status_changed, retries=5)
+@kopf.on.resume(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
+@kopf.on.create(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
+# @kopf.on.update(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, retries=5)
 def credsOp(
     meta, spec, status, body, namespace, labels, name, old, new, **kwargs
 ):
-    
-    logger.info(f'\n old: {old} ')
-    logger.info(f'\n new: {new} ')
-    logger.info(f'\n status: {status} ')
 
-    # logger.info(f'\n newStatus: {new.get('status')} ')
-    # if old is not None:
-    #     logger.info(f'\n oldStatus: {old.get('status')} ')
+    # del unused-arguments for linting
+    del status, labels, kwargs
 
-    
+
     try:
         r = requests.post(
                 url + "/realms/"+ realm +"/protocol/openid-connect/token",
@@ -61,13 +52,12 @@ def credsOp(
                         "grant_type": "client_credentials",
                 },
             )
-
         r.raise_for_status()
         token = r.json()["access_token"]
-    except requests.exceptions.RequestException as e:
-        raise kopf.TemporaryError(
+    except requests.HTTPError as e:
+        raise RuntimeError(
             f"request for token failed with HTTP status {r.status_code}: {e}"
-        ) 
+        ) from None
     else:
         logger.info( f'token : {token}' )
 
@@ -82,12 +72,11 @@ def credsOp(
                 headers={"Authorization": "Bearer " + token},
             )
             
-        r.raise_for_status()
         client_secret = r.json()[0]["secret"]
-    except requests.exceptions.RequestException as e:
-        raise kopf.TemporaryError(
+    except requests.HTTPError as e:
+        raise RuntimeError(
             f"request for client_secret failed with HTTP status {r.status_code}: {e}"
-        )
+        ) from None
     else:
         logger.info( f'client_secret : {client_secret}' )
 
@@ -110,15 +99,14 @@ def credsOp(
             data={"client_id": encoded_client_id, "client_secret": encoded_client_secret}  # Base64 encoded values
         )
 
-        kopf.adopt(secret)
-        
-        core_v1_api.create_namespaced_secret(namespace=namespace, body=secret)
+        core_v1_api.create_namespaced_secret(namespace="default", body=secret)
     except ApiException as e:
-        raise kopf.TemporaryError(
-            f"secret creation failed : {e} "
-        )
+        reason = json.loads(e.body)['reason']
+        if(reason == "AlreadyExists"):
+            logger.info( 'secret already exists no need to create it again' )
+        else:
+            raise kopf.TemporaryError(
+                f"secret creation failed : {e} "
+            )
     else:
         logger.info( 'secret created' )
-
-
-    return "done"

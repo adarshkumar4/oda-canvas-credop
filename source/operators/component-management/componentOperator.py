@@ -672,6 +672,19 @@ async def coreDependentAPIs(
 async def identityConfig(
     meta, spec, status, body, namespace, labels, name, old, new, **kwargs
 ):  # temporarily changed name
+
+    print('\n list parameters details')
+    print('meta:', meta)
+    print('\n spec:', spec)
+    print('\n status:', status)
+    print('\n body:', body)
+    print('\n namespace:', namespace)
+    print('\n labels:', labels)
+    print('\n name:', name)
+    print('\n old:', old)
+    print('\n new:', new)
+    print('\n \n \n')
+
     """Handler function for **identityConfig** part of new or updated components.
 
     Processes the **identityConfig** part of the component envelope and creates the child IdentityConfig resource.

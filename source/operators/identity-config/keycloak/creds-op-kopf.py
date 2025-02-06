@@ -31,12 +31,8 @@ def configure(settings: kopf.OperatorSettings, **_):
     settings.watching.server_timeout = 1 * 60
 
 
-def is_status_changed(status, **_):
-    return status.get('credsOp/status.identityConfig') != "done"
-
-
-@kopf.on.field(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, field="status.identityConfig", when=is_status_changed, retries=5)
-def credsOp(
+@kopf.on.field(GROUP, IDENTITYCONFIG_VERSION, IDENTITYCONFIG_PLURAL, field="status", retries=5)
+async def credsOp(
     meta, spec, status, body, namespace, labels, name, old, new, **kwargs
 ):
     
@@ -44,11 +40,59 @@ def credsOp(
     logger.info(f'\n new: {new} ')
     logger.info(f'\n status: {status} ')
 
-    # logger.info(f'\n newStatus: {new.get('status')} ')
-    # if old is not None:
-    #     logger.info(f'\n oldStatus: {old.get('status')} ')
-
     
+    # try:
+    #     custom_objects_api = kubernetes.client.CustomObjectsApi()
+    #     identity_component = custom_objects_api.get_namespaced_custom_object(
+    #         IDENTITYCONFIG_GROUP,
+    #         IDENTITYCONFIG_VERSION,
+    #         namespace,
+    #         IDENTITYCONFIG_PLURAL,
+    #         name,
+    #     )
+
+    #     print('\n identity_component:', identity_component)
+    # except ApiException as e:
+    #         # Cant find identity component (if component in same chart as other kubernetes resources it may not be created yet)
+    #         if e.status == HTTP_NOT_FOUND:
+    #             raise kopf.TemporaryError(
+    #                 "Cannot find identity component " + identity_component_name
+    #             )
+    #         else:
+    #             logw.error(
+    #                 f"Exception when calling identity custom_objects_api.get_namespaced_custom_object: {e}"
+    #             )
+
+
+    # # identity_component["status"]["clientCreation"] = {}
+    # print('\n 63 status:', status)
+    # print('\n identity_component:', identity_component["status"])
+
+    # try:
+    #     api_response = custom_objects_api.patch_namespaced_custom_object(
+    #         IDENTITYCONFIG_GROUP,
+    #         IDENTITYCONFIG_VERSION,
+    #         namespace,
+    #         IDENTITYCONFIG_PLURAL,
+    #         name,
+    #         identity_component,
+    #     )
+
+    #     print('\n 76 status:', status)
+
+    #     logw.debug(f"patchComponent identity: {api_response}")
+    # except ApiException as e:
+    #     logw.warning(
+    #         f"Exception when calling identity api_instance.patch_namespaced_custom_object for component {name}"
+    #     )
+    #     raise kopf.TemporaryError(
+    #         f"execption :  {e} "
+    #     )
+
+    # del unused-arguments for linting
+    # del status, labels, kwargs
+
+
     try:
         r = requests.post(
                 url + "/realms/"+ realm +"/protocol/openid-connect/token",
@@ -61,13 +105,12 @@ def credsOp(
                         "grant_type": "client_credentials",
                 },
             )
-
         r.raise_for_status()
         token = r.json()["access_token"]
-    except requests.exceptions.RequestException as e:
-        raise kopf.TemporaryError(
+    except requests.HTTPError as e:
+        raise RuntimeError(
             f"request for token failed with HTTP status {r.status_code}: {e}"
-        ) 
+        ) from None
     else:
         logger.info( f'token : {token}' )
 
@@ -82,12 +125,11 @@ def credsOp(
                 headers={"Authorization": "Bearer " + token},
             )
             
-        r.raise_for_status()
         client_secret = r.json()[0]["secret"]
-    except requests.exceptions.RequestException as e:
-        raise kopf.TemporaryError(
+    except requests.HTTPError as e:
+        raise RuntimeError(
             f"request for client_secret failed with HTTP status {r.status_code}: {e}"
-        )
+        ) from None
     else:
         logger.info( f'client_secret : {client_secret}' )
 
@@ -114,11 +156,16 @@ def credsOp(
         
         core_v1_api.create_namespaced_secret(namespace=namespace, body=secret)
     except ApiException as e:
-        raise kopf.TemporaryError(
-            f"secret creation failed : {e} "
-        )
+        reason = json.loads(e.body)['reason']
+        if(reason == "AlreadyExists"):
+            logger.info( 'secret already exists no need to create it again' )
+            pass
+        else:
+            raise kopf.TemporaryError(
+                f"secret creation failed : {e} "
+            )
     else:
         logger.info( 'secret created' )
 
 
-    return "done"
+

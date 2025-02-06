@@ -98,3 +98,16 @@ except ApiException as e:
         )
 else:
     logger.info( 'secret created' )
+
+    
+    
+
+    print('meta:', meta)
+    print('\n spec:', spec)
+    print('\n status:', status)
+    print('\n body:', body)
+    print('\n namespace:', namespace)
+    print('\n labels:', labels)
+    print('\n name:', name)
+    print('\n old:', old)
+    print('\n new:', new)
