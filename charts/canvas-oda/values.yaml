@@ -110,6 +110,22 @@ keycloak:
                 "manage-clients"
               ]
              }
+            },
+            {
+            "username": "service-account-dummy-client",
+            "enabled": true,
+            "clientRoles": {
+              "realm-management": [
+                "manage-clients"
+              ]
+             }
+            }
+          ],
+          "clients": [
+            {
+              "clientId": "dummy-client",
+              "enabled": true,
+              "serviceAccountsEnabled": true,
             }
           ]
         }

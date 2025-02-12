@@ -1,0 +1,17 @@
+"clientId": "credsop",
+"enabled": true,
+"serviceAccountsEnabled": true,
+"optionalClientScopes": [
+    "address",
+    "phone",
+    "offline_access",
+    "microprofile-jwt"
+],
+"access": {
+    "view": true,
+    "configure": true,
+    "manage": true
+}
+
+
+"enabled", "clientAuthenticatorType", "redirectUris", "clientId", "authenticationFlowBindingOverrides", "authorizationServicesEnabled", "name", "implicitFlowEnabled", "registeredNodes", "nodeReRegistrationTimeout", "publicClient", "attributes", "protocol", "webOrigins", "protocolMappers", "id", "baseUrl", "surrogateAuthRequired", "adminUrl", "fullScopeAllowed", "frontchannelLogout", "clientTemplate", "origin", "defaultClientScopes", "directGrantsOnly", "rootUrl", "secret", "useTemplateMappers", "notBefore", "useTemplateScope", "standardFlowEnabled", "description", "directAccessGrantsEnabled", "alwaysDisplayInConsole", "useTemplateConfig", "serviceAccountsEnabled", "optionalClientScopes", "consentRequired", "access", "bearerOnly", "registrationAccessToken", "defaultRoles", "authorizationSettings"

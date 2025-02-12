@@ -1,0 +1,113 @@
+"clientId": "r4-productcatalogmanagement",
+"enabled": true,
+"standardFlowEnabled": true,
+"serviceAccountsEnabled": false,
+"optionalClientScopes": [
+    "address",
+    "phone",
+    "Accessclient",
+    "offline_access",
+    "microprofile-jwt"
+],
+"access": {
+    "view": true,
+    "configure": true,
+    "manage": true
+}
+
+
+"id": "c9e43e0d-1092-4f64-8afd-627caef11987",
+        "clientId": "credsop",
+        "name": "credsop",
+        "description": "",
+        "surrogateAuthRequired": false,
+        "enabled": true,
+        "alwaysDisplayInConsole": false,
+        "clientAuthenticatorType": "client-secret",
+        "secret": "U447ybPAq3zZe1Lv7ys2oCajmcz4p3ce",
+        "redirectUris": [],
+        "webOrigins": [],
+        "notBefore": 0,
+        "bearerOnly": false,
+        "consentRequired": false,
+        "standardFlowEnabled": false,
+        "implicitFlowEnabled": false,
+        "directAccessGrantsEnabled": false,
+        "serviceAccountsEnabled": true,
+        "publicClient": false,
+        "frontchannelLogout": true,
+        "protocol": "openid-connect",
+        "attributes": {
+            "oidc.ciba.grant.enabled": "false",
+            "oauth2.device.authorization.grant.enabled": "false",
+            "client.secret.creation.time": "1734958471",
+            "backchannel.logout.session.required": "true",
+            "backchannel.logout.revoke.offline.tokens": "false"
+        },
+        "authenticationFlowBindingOverrides": {},
+        "fullScopeAllowed": true,
+        "nodeReRegistrationTimeout": -1,
+        "protocolMappers": [
+            {
+                "id": "3d878c6c-b508-4c60-9e3e-1f6e42994a50",
+                "name": "Client IP Address",
+                "protocol": "openid-connect",
+                "protocolMapper": "oidc-usersessionmodel-note-mapper",
+                "consentRequired": false,
+                "config": {
+                    "user.session.note": "clientAddress",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true",
+                    "claim.name": "clientAddress",
+                    "jsonType.label": "String"
+                }
+            },
+            {
+                "id": "dbe049ea-c487-4944-8ec5-b795d688534e",
+                "name": "Client ID",
+                "protocol": "openid-connect",
+                "protocolMapper": "oidc-usersessionmodel-note-mapper",
+                "consentRequired": false,
+                "config": {
+                    "user.session.note": "clientId",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true",
+                    "claim.name": "clientId",
+                    "jsonType.label": "String"
+                }
+            },
+            {
+                "id": "e7c85b3a-65b4-47c8-927a-213d19411bce",
+                "name": "Client Host",
+                "protocol": "openid-connect",
+                "protocolMapper": "oidc-usersessionmodel-note-mapper",
+                "consentRequired": false,
+                "config": {
+                    "user.session.note": "clientHost",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true",
+                    "claim.name": "clientHost",
+                    "jsonType.label": "String"
+                }
+            }
+        ],
+        "defaultClientScopes": [
+            "web-origins",
+            "acr",
+            "profile",
+            "roles",
+            "email"
+        ],
+        "optionalClientScopes": [
+            "address",
+            "phone",
+            "offline_access",
+            "microprofile-jwt"
+        ],
+        "access": {
+            "view": true,
+            "configure": true,
+            "manage": true
+        }
+
+"enabled", "clientId",  "authorizationServicesEnabled",  "serviceAccountsEnabled", "optionalClientScopes", "authorizationSettings"]
