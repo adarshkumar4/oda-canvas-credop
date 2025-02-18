@@ -8,6 +8,10 @@ global:
   certificate:
     # -- Name of the certificate and webhook |
     appName: "compcrdwebhook"
+  hookImages:
+    kubectl: bitnami/kubectl:latest
+    kubectlCurl: tmforumodacanvas/baseimage-kubectl-curl:1.30.5
+    busybox: busybox:1.35
 
 preqrequisitechecks:
   istio:  true 
@@ -110,6 +114,23 @@ keycloak:
                 "manage-clients"
               ]
              }
+            },
+            {
+            "username": "service-account-credentialsmanagement-operator",
+            "enabled": true,
+            "clientRoles": {
+              "realm-management": [
+                "view-clients"
+              ]
+             }
+            }
+          ],
+          "clients": [
+            {
+            "clientId": "credentialsmanagement-operator",
+            "enabled": true,
+            "standardFlowEnabled": false,
+            "serviceAccountsEnabled": true,
             }
           ]
         }
@@ -159,7 +180,7 @@ identityconfig-operator-keycloak:
     kcrealm: odari
     # -- Log level [python] (https://docs.python.org/3/library/logging.html
     loglevel: '20'
-   
+      
 dependentapi-simple-operator:
   enabled: true
   image: tmforumodacanvas/dependentapi-simple-operator
@@ -417,7 +438,8 @@ api-operator-kong:
       pullPolicy: IfNotPresent
       kongopImage: tmforumodacanvas/api-operator-kong
       kongopVersion: 1.0.0
-      kongopPrereleaseSuffix:  
+      kongopPrereleaseSuffix:
+    initContainerImage: busybox:1.28
 
 
 # -----------------------------------------------------------------------------
@@ -457,3 +479,4 @@ api-operator-apisix:
   IstioGatewayServerhostName: "*"
   IstioGatewaymonitoredNamespaces: components
   apisixistiooperatordeploymentnamespace: canvas
+  initContainerImage: busybox:1.28
