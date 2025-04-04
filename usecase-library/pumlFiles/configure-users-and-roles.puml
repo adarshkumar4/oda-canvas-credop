@@ -19,14 +19,14 @@ note right
 end note
 
 identityOperator -> IdentityResource : Query bootstrap Admin role defined\nin component SecurityFunction segment
-identityOperator -> IDM: Assign Canvas **canvassystem** user to Admin role
+identityOperator -> IDM: Assign Admin role to Canvas **canvassystem** client 
 note right
     The Admin role is used by the Canvas to call APIs on the ODA Component.
 end note
 
 identityOperator -> IDM: Create system user for component
 note right
-    This is a system-generated user (uuid) that is used when
+    This is a system-generated client (uuid) that is used when
     the component makes API calls (to another component or
     canvas service).
 end note
@@ -64,7 +64,7 @@ end
 group Uninstall
     ComponentOperator -> IdentityResource  : delete
     IdentityResource -> identityOperator: on.delete 
-    identityOperator -> IDM: Delete client, system user and all associated roles  
+    identityOperator -> IDM: Delete client and all associated roles  
 end
 
 @enduml
