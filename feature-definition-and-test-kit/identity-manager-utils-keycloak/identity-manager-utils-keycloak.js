@@ -1,4 +1,5 @@
 const axios = require('axios');
+const qs = require('qs');
 
 const dotenv = require('dotenv');
 
@@ -31,12 +32,16 @@ const identityManagerUtils = {
   getToken: async function(baseURL, userName, password) {
     const userData = { username: userName, password: password, grant_type: 'password', client_id: clientId };
     const headers = {'content-type': 'application/x-www-form-urlencoded'};
+
+    console.log('environment var:', userData);
+    console.log('stringify userData:', qs.stringify(userData));
+    
     const res = await axios({
       url: '/realms/master/protocol/openid-connect/token',
       baseURL: baseURL,
       method: 'post',
       headers: headers,
-      data: userData,
+      data: qs.stringify(userData),
     }).catch(err => {
       console.log('This is the error: ');
       console.log(err);

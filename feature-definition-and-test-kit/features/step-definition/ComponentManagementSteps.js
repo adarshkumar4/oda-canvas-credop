@@ -209,42 +209,42 @@ Before(async function (scenario) {
  * Optionally Uninstall the package associated with the release name and namespace.
  * Optionally Log the Canvas controller
  */
-After(async function (scenario) {
+// After(async function (scenario) {
   
-  if (CLEANUP_PACKAGE) {
-    await packageManagerUtils.uninstallPackage(  global.currentReleaseName, NAMESPACE)   
-  }
+//   if (CLEANUP_PACKAGE) {
+//     await packageManagerUtils.uninstallPackage(  global.currentReleaseName, NAMESPACE)   
+//   }
 
-  if (DEBUG_LOGS) {
-    console.log()
-    console.log('Scenario status: ' + scenario.result.status)
-    if (true) { //(scenario.result.status === 'FAILED') {
-      console.log('------------------------------------------------------------------')
-      console.log('Controller logs:')
-      try {
-        console.log()
-        console.log('==================================================================')
-        console.log('Operator logs for : component-operator')
-        console.log(await resourceInventoryUtils.getOperatorLogs('component-operator', null))  
-        console.log()
-        console.log('==================================================================')
-        console.log('Operator logs for : api-operator-istio')
-        console.log(await resourceInventoryUtils.getOperatorLogs('api-operator-istio', null))  
-        console.log()
-        console.log('==================================================================')
-        console.log('Operator logs for : identityconfig-operator-keycloak, identityconfig-operator-keycloak')
-        console.log(await resourceInventoryUtils.getOperatorLogs('identityconfig-operator-keycloak', 'identityconfig-operator-keycloak'))  
-        console.log()
-        console.log('==================================================================')
-        console.log('Operator logs for : dependent-api-simple-operator', null)
-        console.log(await resourceInventoryUtils.getOperatorLogs('canvas-depapi-op'))  
-      } catch (error) {
-        console.log('Error getting operator logs: ' + error)
-      }
-      console.log('------------------------------------------------------------------')
-    } 
-    console.log()
-    console.log('Scenario ended at: ' + new Date().toISOString())
-  }
+//   if (DEBUG_LOGS) {
+//     console.log()
+//     console.log('Scenario status: ' + scenario.result.status)
+//     if (true) { //(scenario.result.status === 'FAILED') {
+//       console.log('------------------------------------------------------------------')
+//       console.log('Controller logs:')
+//       try {
+//         console.log()
+//         console.log('==================================================================')
+//         console.log('Operator logs for : component-operator')
+//         console.log(await resourceInventoryUtils.getOperatorLogs('component-operator', null))  
+//         console.log()
+//         console.log('==================================================================')
+//         console.log('Operator logs for : api-operator-istio')
+//         console.log(await resourceInventoryUtils.getOperatorLogs('api-operator-istio', null))  
+//         console.log()
+//         console.log('==================================================================')
+//         console.log('Operator logs for : identityconfig-operator-keycloak, identityconfig-operator-keycloak')
+//         console.log(await resourceInventoryUtils.getOperatorLogs('identityconfig-operator-keycloak', 'identityconfig-operator-keycloak'))  
+//         console.log()
+//         console.log('==================================================================')
+//         console.log('Operator logs for : dependent-api-simple-operator', null)
+//         console.log(await resourceInventoryUtils.getOperatorLogs('canvas-depapi-op'))  
+//       } catch (error) {
+//         console.log('Error getting operator logs: ' + error)
+//       }
+//       console.log('------------------------------------------------------------------')
+//     } 
+//     console.log()
+//     console.log('Scenario ended at: ' + new Date().toISOString())
+//   }
 
-});
+// });
