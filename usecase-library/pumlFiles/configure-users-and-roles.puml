@@ -26,7 +26,7 @@ end note
 
 identityOperator -> IDM: Create system user for component
 note right
-    This is a system-generated client (uuid) that is used when
+    This is a system-generated user (uuid) that is used when
     the component makes API calls (to another component or
     canvas service).
 end note
