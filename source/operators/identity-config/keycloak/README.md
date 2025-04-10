@@ -18,9 +18,11 @@ The identity config operator consists of two modules, both written in Python. Th
 Keycloak setup
 
 Realm = whole organisation
+
 Client (within Realm) = 1 App or component
 
 Roles can be scoped at realm or client level
+
 Users can be scoped at realm or client level
 
 
