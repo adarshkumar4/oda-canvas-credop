@@ -1,8 +1,8 @@
 # Credentials Management Operator
 
+The Credentials Management Operator is a Kubernetes operator designed to securely manage and automate the creation of secrets for components deployed in the ODA-Canvas framework. It leverages Kubernetes and Keycloak to handle sensitive information, ensuring secure access with minimal manual intervention.
 
-
-
+The Credentials Management Operator is a Kubernetes operator designed to manage secure secrets for components in the ODA-Canvas framework. It automates the creation and lifecycle management of Kubernetes secrets, ensuring secure handling of sensitive information.
 
 ## Installation
 
