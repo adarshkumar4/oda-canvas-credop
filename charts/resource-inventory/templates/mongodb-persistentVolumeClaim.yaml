@@ -1,9 +1,9 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{.Release.Name}}-svcinv-mongodb-pv-claim
+  name: {{.Release.Name}}-resinv-mongodb-pv-claim
   labels:
-    app: {{ .Release.Name }}-svcinv-mongodb
+    app: {{ .Release.Name }}-resinv-mongodb
 spec:
   {{ if .Values.persistence.storageClassName -}}
   storageClassName: {{ .Values.persistence.storageClassName }}

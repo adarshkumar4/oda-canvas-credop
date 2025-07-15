@@ -20,7 +20,7 @@ info:
     - Manage notification of events
   version: 5.0.0
 servers:
-  - url: 'http://localhost:8639/tmf-api/resourceInventoryManagement/v5'
+  - url: 'http://resource-inventory.canvas.svc.cluster.local'
 tags:
   - name: resource
     description: Operations for Resource Resource

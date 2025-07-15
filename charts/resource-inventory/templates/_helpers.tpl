@@ -1,7 +1,7 @@
 {{/*
-build the full dependent api docker image name from image + version + prereleaseSuffix
+build the full resource-inventory docker image name from image + version + prereleaseSuffix
 */}}
-{{- define "canvas-info-service.dockerimage" -}}
+{{- define "canvas-resource-inventory.dockerimage" -}}
   {{- .Values.image -}}:{{- .Values.version -}}
   {{- if .Values.prereleaseSuffix -}}
     -{{- .Values.prereleaseSuffix -}}
@@ -12,7 +12,7 @@ build the full dependent api docker image name from image + version + prerelease
 {{/*
 overwrite imagePullSecret with "Always" if prereleaseSuffix is set
 */}}
-{{- define "canvas-info-service.imagePullPolicy" -}}
+{{- define "canvas-resource-inventory.imagePullPolicy" -}}
   {{- if .Values.prereleaseSuffix -}}
     Always
   {{- else -}}

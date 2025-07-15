@@ -1,6 +1,6 @@
 apiVersion: v2
-name: canvas-info-service
-description: The Canvas Info Service
+name: canvas-resource-inventory
+description: The Canvas Resource Inventory
 
 type: application
 

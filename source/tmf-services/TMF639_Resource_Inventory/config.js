@@ -12,12 +12,16 @@ if (SERVER_URL) {
 const config = {
   ROOT_DIR: __dirname,
   URL_PORT: 8639,
-  URL_PATH: '/tmf-api/resourceInventoryManagement',
+  // URL_PATH: '/tmf-api/resourceInventoryManagement',
+  URL_PATH: 'http://resource-inventory.canvas.svc.cluster.local',
   BASE_VERSION: 'v5',
   CONTROLLER_DIRECTORY: path.join(__dirname, 'controllers'),
-  OPENAPI_YAML: 'api/TMF639-Resource_Inventory_Management-v5.0.0.oas.yaml',
-  FULL_PATH: 'http://localhost:8639/tmf-api/resourceInventoryManagement/v5',
-  EXTERNAL_URL: 'http://localhost:8639/tmf-api/resourceInventoryManagement/v5',
+  // OPENAPI_YAML: 'api/TMF639-Resource_Inventory_Management-v5.0.0.oas.yaml',
+  // FULL_PATH: 'http://localhost:8639/tmf-api/resourceInventoryManagement/v5',
+  // EXTERNAL_URL: 'http://localhost:8639/tmf-api/resourceInventoryManagement/v5',
+  OPENAPI_YAML: '',
+  FULL_PATH: '',
+  EXTERNAL_URL: '',
 
   SCHEMA_URL: '',
 
@@ -42,8 +46,12 @@ const config = {
 }
 
 config.OPENAPI_YAML   = path.join(config.ROOT_DIR, 'api', 'TMF639-Resource_Inventory_Management-v5.0.0.oas.yaml')
-config.FULL_PATH      = 'http://localhost:8639/tmf-api/resourceInventoryManagement/v5'
-config.EXTERNAL_URL   = 'http://localhost:8639/tmf-api/resourceInventoryManagement/v5'
+// config.FULL_PATH      = 'http://localhost:8639/tmf-api/resourceInventoryManagement/v5'
+// config.EXTERNAL_URL   = 'http://localhost:8639/tmf-api/resourceInventoryManagement/v5'
+
+
+config.FULL_PATH      =  `${config.URL_PATH}:${config.URL_PORT}/${config.BASE_VERSION}`
+config.EXTERNAL_URL   = config.FULL_PATH
 
 if(jsonConfig.servers && jsonConfig.servers.length>0) {
   config.EXTERNAL_URL = jsonConfig.servers[0].url;
