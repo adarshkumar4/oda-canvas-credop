@@ -2,7 +2,7 @@
 
 The Credentials Management Operator is a Kubernetes operator designed for the ODA Canvas Reference Implementation to securely manage and automate the creation and lifecycle management of Kubernetes secrets for components deployed on ODA-Canvas. It leverages Kubernetes and identity platform to handle sensitive information, ensuring secure access with minimal manual intervention.
 
-The operator is built using the Kopf framework (Python).It watches for changes in identityconfigs custom resources and handles lifecycle management of Kubernetes secrets accordingly.It interacts with identity platform i.e. Keycloak using environment variables for configuration (CLIENT_ID, CLIENT_SECRET, KEYCLOAK_BASE, KEYCLOAK_REALM).The operator is containerized and deployed via a Helm chart.Key environment variables and configuration options are set via Helm values in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml#L23) or it can be passed during installation of this operator using **--set** option with helm insatall command.
+The operator is built using the Kopf framework.It watches for changes in `identityconfigs` custom resources and handles lifecycle management of Kubernetes secrets accordingly.It interacts with identity platform (e.g. Keycloak) using environment variables for configuration (CLIENT_ID, CLIENT_SECRET, KEYCLOAK_BASE, KEYCLOAK_REALM) which are set via Helm values in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml) or it can be passed during installation of the operator using **--set** option with helm insatall command.
 
 ## Installation
 
@@ -17,7 +17,7 @@ The operator is built using the Kopf framework (Python).It watches for changes i
    
     Client for Credentials-Management-Operator is created in IDM through keycloak installation [chart](https://github.com/tmforum-oda/oda-canvas/blob/c5dc6d8c9a04a456941ba7ae10c9a8e6b51b1398/charts/canvas-oda/values.yaml#L114) during keycloak installation. 
 
-    Manually copy **secret** of Credentials-Management-Operator **client** `credentialsmanagement-operator` in keycloak and add it in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml#L23) file :
+    Manually copy **secret** of Credentials-Management-Operator **client** `credentialsmanagement-operator` in keycloak and add it in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml) file :
         
      ```yaml
      client_secret: pDWc*****ITn
@@ -45,4 +45,4 @@ The operator is built using the Kopf framework (Python).It watches for changes i
    
 
 
-For more details, see the Helm chart documentation in `charts/credentialsmanagement-operator/README.md` and configuration options in `values.yaml`.
+For more details, see the Helm chart documentation in [README.md](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/README.md) and configuration options in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml).
