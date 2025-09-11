@@ -1,8 +1,8 @@
 # Credentials Management Operator
 
-The Credentials Management Operator is a Kubernetes operator designed to securely manage and automate the creation of secrets for components deployed in the ODA-Canvas framework. It leverages Kubernetes and Keycloak to handle sensitive information, ensuring secure access with minimal manual intervention.
+The Credentials Management Operator is a Kubernetes operator designed for the ODA Canvas Reference Implementation to securely manage and automate the creation and lifecycle management of Kubernetes secrets for components deployed on ODA-Canvas. It leverages Kubernetes and identity platform to handle sensitive information, ensuring secure access with minimal manual intervention.
 
-The Credentials Management Operator is a Kubernetes operator designed to manage secure secrets for components in the ODA-Canvas framework. It automates the creation and lifecycle management of Kubernetes secrets, ensuring secure handling of sensitive information.
+The operator is built using the Kopf framework (Python).It watches for changes in identityconfigs custom resources and handles lifecycle management of Kubernetes secrets accordingly.It interacts with identity platform i.e. Keycloak using environment variables for configuration (CLIENT_ID, CLIENT_SECRET, KEYCLOAK_BASE, KEYCLOAK_REALM).The operator is containerized and deployed via a Helm chart.Key environment variables and configuration options are set via Helm values in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml#L23) or it can be passed during installation of this operator using **--set** option with helm insatall command.
 
 ## Installation
 
@@ -15,26 +15,34 @@ The Credentials Management Operator is a Kubernetes operator designed to manage 
 
 2. Install Credentials-Management-Operator
    
-    Client for Credentials-Management-Operator is created in IDM through keycloak installation [chart](https://github.com/tmforum-oda/oda-canvas/blob/c5dc6d8c9a04a456941ba7ae10c9a8e6b51b1398/charts/canvas-oda/values.yaml#L114)  during keycloak installation. 
+    Client for Credentials-Management-Operator is created in IDM through keycloak installation [chart](https://github.com/tmforum-oda/oda-canvas/blob/c5dc6d8c9a04a456941ba7ae10c9a8e6b51b1398/charts/canvas-oda/values.yaml#L114) during keycloak installation. 
 
-    Manually copy **secret** of Credentials-Management-Operator **client** `credentialsmanagement-operator` in keycloak and add it in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml#L23).:
+    Manually copy **secret** of Credentials-Management-Operator **client** `credentialsmanagement-operator` in keycloak and add it in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml#L23) file :
         
      ```yaml
      client_secret: pDWc*****ITn
      ```
 
-     Using updated **values.yaml** directly Install the operator using the following command.
+     Using updated **values.yaml** file install the operator using the following command.
   
       ```bash
       helm install credman-op charts/credentialsmanagement-operator -n canvas -f values.yaml
       ```
     **"or"**
    
-     If you prefer to use the **--set** option instead of editing **values.yaml**.You can add **secret** inline without modifying your values file:
+     If you prefer to use the **--set** option instead of editing **values.yaml**.You can add **secret** inline without modifying helm values file:
   
       ```bash
       helm install credman-op charts/credentialsmanagement-operator -n canvas --set=credentials.client_secret=pDWc*****ITn
       ```
-      **"or"**
+   **"or"**
      
-     If you want you can set it as an environment variable 
+     If you want you can also set it as an environment variable and then install the operator using helm install command.
+   
+      ```bash
+      helm install credman-op charts/credentialsmanagement-operator -n canvas
+      ```
+   
+
+
+For more details, see the Helm chart documentation in `charts/credentialsmanagement-operator/README.md` and configuration options in `values.yaml`.
