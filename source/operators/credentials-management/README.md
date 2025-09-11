@@ -17,7 +17,7 @@ The operator is built using the Kopf framework.It watches for changes in `identi
    
     Client for Credentials-Management-Operator is created in IDM through keycloak installation [chart](https://github.com/tmforum-oda/oda-canvas/blob/c5dc6d8c9a04a456941ba7ae10c9a8e6b51b1398/charts/canvas-oda/values.yaml#L114) during keycloak installation. 
 
-    Manually copy **secret** of Credentials-Management-Operator **client** `credentialsmanagement-operator` in keycloak and add it in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml) file :
+    Manually retrieve **secret** of Credentials-Management-Operator **client** `credentialsmanagement-operator` in keycloak and add it in [values.yaml](https://github.com/tmforum-oda/oda-canvas/blob/main/charts/credentialsmanagement-operator/values.yaml) file :
         
      ```yaml
      client_secret: pDWc*****ITn
