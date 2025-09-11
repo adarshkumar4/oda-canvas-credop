@@ -19,7 +19,7 @@ deployment:
 credentials:
   # clientId of Credentials-Management-Operator client in Keycloak.It should be same as the one specified during the client creation in the Keycloak installation chart.
   client_id: credentialsmanagement-operator
-  # secret of Credentials-Management-Operator client in Keycloak.It needs to be manually retrieved from Keycloak and added here.
+  # secret of Credentials-Management-Operator client in Keycloak.It needs to be manually retrieved from Keycloak and add it here before installing this operator.
   client_secret: 
 configmap:
   # Keycloak's base url, configured according to : "http://<oda-canvas release name>-keycloak-headless.<oda-canvas release namespace>:<keycloak http port>/auth"
