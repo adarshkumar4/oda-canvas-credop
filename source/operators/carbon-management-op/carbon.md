@@ -1,21 +1,19 @@
 # Carbon-Management-Operator
 
-
+## Carbon Intensity
 Carbon intensity measures how much carbon (CO2e) is emitted per kilowatt-hour (KWh) of electricity consumed. The standard unit of carbon intensity is gCO2eq/kWh, or grams of carbon per kilowatt hour.
+ 
+## Carbon Aware Software
+Carbon awareness is the understanding that the environmental impact of electricity consumption varies based on the time and location of consumption, due to the fluctuating availability of renewable energy sources. Electricity is produced from a mix of sources, each with its own carbon emissions profile — renewables like wind, solar, and hydro generates minimal carbon, while fossil fuels such as coal and gas produces much more, with coal being the most carbon-intensive. The carbon footprint of energy used is determined primarily by its source, then the amount consumed.
+
+Carbon-aware software is designed to increase electricity usage when the grid is supplied by cleaner, low-carbon sources, and decrease usage when the grid relies more on high-carbon sources. This approach helps minimize overall carbon emissions by aligning energy consumption with periods of lower carbon intensity of grid.
+
+[Studies](https://ieeexplore.ieee.org/document/6128960) shows that these actions can result in 45% to 99% carbon reductions depending on the number of renewables powering the grid.
 
 
-Carbon awareness means understanding that the energy you consume does not always have the same impact in terms of carbon intensity - it varies depending on the time and place it is consumed due to the inherent variability of renewable energy caused by the unpredictability of weather conditions. Electricity is generated from various sources, each with different carbon emissions. Renewable sources (wind, solar, hydro) emit little to no carbon, while fossil fuels (coal, gas) emit more, with coal being the highest.carbon consumption is not directly proportional to the amount of energy consumption it's based on the source of energy it's coming from.
+## We can make our softwares Carbon Aware by following these approaches :
 
-Being Carbon Aware Software means consuming electricity more when electricity is cleaner (i.e.more energy comes from low carbon sources) and consuming electricity less when electricity is dirtier (i.e. more energy comes from high carbon sources). 
-
-[Studies](https://ieeexplore.ieee.org/document/6128960) show these actions can result in 45% to 99% carbon reductions depending on the number of renewables powering the grid.
-
-
-Carbon Aware Software
-
-We can achieve goal of carbon aware software by applying these two approaches.
-
-Scheduling workloads :
+### Scheduling workloads according to the carbon intensity of the region or grid where they run:
 Use Case:
 For example, training a Machine Learning model at a different time or region with much lower carbon intensity.By leveraging real-time data on grid carbon intensity, carbon aware software can schedule computational tasks, adjust performance settings, or shift workloads to times and places where renewable energy sources are more prevalent, minimizing the overall carbon footprint.
 
@@ -34,60 +32,23 @@ The bulk of the functionality comes from the Kubernetes Scheduler itself and a r
 [Carbon emission-aware job scheduling for Kubernetes deployments](https://link.springer.com/article/10.1007/s11227-023-05506-7)
 
 
+### Scaling workloads according to the carbon intensity of the region or grid where they run:
 
+We can scale workloads without making any changes to the codes of the workloads by developing a Kubernetes operator which uses any KEDA (Kubernetes Event-Driven Autoscaler) scaler to scale workloads based on carbon intensity data of the electrical grids and independent of the workload usage. Carbon intensity data for electrical grids can be retrieved from third party sources such as WattTime, Electricity Map or any other provider. These datas from third party sources can be used to create a configMap which can be read by Kubernetes operator to dynamically adjust the scaling behavior of KEDA scaler and set maxReplicaCount to limit scaling workloads during high carbon intensity periods, and allow more scaling when carbon intensity is lower.
 
+This Approach with detailed solution is available here : https://github.com/Azure/carbon-aware-keda-operator.
 
-
-
-
-
-
-
-
-Scaling of Pods:
- 
-By scaling workloads according to the carbon intensity of the region or grid where they run, we can optimize the carbon efficiency and environmental impact of our applications.
-
-Kubernetes operator that aims to reduce carbon emissions by helping KEDA scale Kubernetes workloads based on carbon intensity. 
-
-This operator can use carbon intensity data from third party sources such as WattTime, Electricity Map or any other provider, to dynamically adjust the scaling behavior of KEDA. The operator does not require any application or workload code change, and it works with any KEDA scaler.
-
-Use cases for the operator include low priority and time flexible workloads that support interuptions in dev/test environments. Some examples of these are non-critical data backups, batch processing jobs, data analytics processing, and ML training jobs.
-
-The carbon aware KEDA operator retrieves the carbon intensity data from a ConfigMap, which is generated by a third party component.
-the Kubernetes Carbon Intensity Exporter operator, which builds on the carbon-aware-sdk, to provide
- carbon intensity data in the Kubernetes cluster, so it can be used by operators for carbon aware decision making.
- The "Kubernetes carbon intensity exporter" retrieves 24-hour carbon intensity forecast data every 12 hours. Upon successful data pull, the old configmap will be deleted and a new configmap with the same name will be created.
- Any other Kubernetes operator or workload can read the configMap for utilizing the carbon intensity data.
-
-Making carbon aware scaling decisions:
-As an admin you create a CarbonAwareKedaScaler spec for targetRef : scaledObject or scaledJob
-
-Then the operator will update KEDA scaledObjects and scaledJob maxReplicaCount field, based on the current carbon intensity.
-
-The current logic for carbon aware scaling is based on carbon intensity metric only, which is independent of the workload usage.
-
-The operator will not compute a desired replicaCount for your scaledObjects or scaledJobs, as this is the responsibility of KEDA and HPA. The operator would define a "ceiling for allowed maxReplicas" based on carbon intensity of the current time.
-
-In practice, this operator will throttle workloads and prevent them from bursting during high carbon intensity periods, and allow more scaling when carbon intensity is lower.
-
-data exporter by which Kubernetes operators can leverage the carbon intensity data from 3rd party for carbon-aware workload scheduling.
-
-We provide a helm chart to help install the exporter. Note that this data exporter ONLY retrieves the carbon intensity data from WattTime OR Electricity Maps.
-
-The data exporter will retrieve the 24-hour carbon intensity forecast data from WattTime every 12 hours. Upon successful data pull, the old configmap will be deleted and a new configmap with the same name will be created. If the data pull hits failures, the new confgimap is still created with the last seen binary data and the failure reason should be mentioned in the value of the message key. Any Kubernetes operator can read the configmap for utilizing the carbon intensity data.
-
-The EmissionData struct is defined in here. https://github.com/Azure/kubernetes-carbon-intensity-exporter/blob/main/pkg/sdk/api/emissions_data.go
-
+Use case : low priority and time flexible workloads that support interuptions in dev/test environments. Some examples of these are 
+non-critical data backups
+batch processing jobs
+data analytics processing
+ML training jobs.
 Building AI models when carbon emissions are lower
 Deploying software into the cloud in locations that have greener energy sources
 Running software updates at greener energy time windows
 Using data to run hypothetical models to understand how you could start driving impact and reduce emissions, drive business cases for change, and create a greener future.
 
-You can reduce the carbon footprint of your application by just running things at different times and in different locations.
-When software does more when the electricity is clean and do less when the electricity is dirty, or runs in a location where the energy is cleaner, we call this carbon aware software.
 
-carbon efficient vs carbon aware software.
 
 With the Carbon Aware SDK you can build software that chooses to run when the wind is blowing, enable systems to follow the sun, moving around the world to where energy is the greenest, and create tools that give insights and help software innovators to make greener software decisions. All of this helps reduce carbon emissions.
 
