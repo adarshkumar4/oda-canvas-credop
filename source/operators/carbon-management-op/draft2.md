@@ -14,9 +14,7 @@ Carbon intensity measures the amount of carbon dioxide equivalent (CO2e) emitted
 Carbon awareness refers to understanding that the environmental impact of electricity consumption varies based on the time and location of use. This variation is due to the fluctuating availability of renewable energy sources. Electricity is generated from a mix of sources, each with its own carbon emissions profile. Renewable sources like wind, solar, and hydro produce minimal carbon emissions, while fossil fuels such as coal and gas are significantly more carbon-intensive, with coal being the highest. The carbon footprint of energy consumption is primarily determined by its source and the amount consumed.
 
 ### Carbon-Aware Software
-Carbon-aware software optimizes electricity usage by:
-- Increasing consumption during periods when the grid is powered by cleaner, low-carbon sources.
-- Reducing consumption when high-carbon sources dominate.
+Carbon-aware software is designed to optimize electricity usage by increasing consumption during periods when the grid is powered by cleaner, low-carbon sources and reducing it when the grid relies more on high-carbon sources in order to reduce carbon emissions.
 
 [Studies](https://ieeexplore.ieee.org/document/6128960) indicate that such practices can achieve carbon reductions ranging from 45% to 99%, depending on the proportion of renewables in the energy mix.
 
