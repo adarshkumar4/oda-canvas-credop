@@ -61,3 +61,6 @@ Current events, for example, in terms of incoming web requests or messages in a 
 The availability of clean energy. The electricity on the data centre's power grid comes from different sources, such as coal, nuclear, and solar. We should do more when the energy is cleaner, i.e., the carbon intensity is lower to reduce emissions further.
  make our applications greener by making them event-driven and carbon-aware.
  these properties at the level of the Kubernetes cluster using KEDA (Kubernetes Event-Driven Autoscaler) and Microsoft's Carbon Aware KEDA Operator, so all applications in the cluster can benefit without becoming more complex themselves.
+
+
+
